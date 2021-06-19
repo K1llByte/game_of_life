@@ -7,6 +7,8 @@ void GameOfLife<Width,Height>::set_cell(const size_t x, const size_t y)
     // Set state bit
     this->grid[y][x] |= STATE_MASK;
 
+#ifdef CONTINUOUS_GRID
+
     // Set neighbourhood vectors 
     const size_t x_plus  = (x+1) % Width;
     const size_t x_minus = (x == 0) ? Width-1 : x-1;
@@ -27,6 +29,82 @@ void GameOfLife<Width,Height>::set_cell(const size_t x, const size_t y)
     this->grid[y_plus ][x_minus] += inc;
     this->grid[y_plus ][x      ] += inc;
     this->grid[y_plus ][x_plus ] += inc;
+
+#else
+
+    // SOLUTION 1
+
+    // const size_t x_plus  = (x+1) % Width;
+    // const size_t x_minus = (x == 0) ? Width-1 : x-1;
+    // const size_t y_plus  = (y+1) % Height;
+    // const size_t y_minus = (y == 0) ? Height-1 : y-1;
+
+    // const uint8_t inc = 0b00000010;
+    // size_t inc_x_plus  = inc;
+    // size_t inc_x_minus = inc;
+    // size_t inc_y_plus  = inc;
+    // size_t inc_y_minus = inc;
+
+    // if(x == Width-1)
+    //     inc_x_plus = 0;
+    
+    // if(x == 0)
+    //     inc_x_minus = 0;
+
+    // if(y == Height-1)
+    //     inc_y_plus = 0;
+
+    // if(y == 0)
+    //     inc_y_minus = 0;
+
+    // this->grid[y_minus][x_minus] += inc_y_minus | inc_x_minus;
+    // this->grid[y_minus][x      ] += inc_y_minus;
+    // this->grid[y_minus][x_plus ] += inc_y_minus | inc_x_plus;
+    // this->grid[y      ][x_minus] += inc_x_minus;
+    // this->grid[y      ][x_plus ] += inc_x_plus;
+    // this->grid[y_plus ][x_minus] += inc_y_plus | inc_x_minus;
+    // this->grid[y_plus ][x      ] += inc_y_plus;
+    // this->grid[y_plus ][x_plus ] += inc_y_plus | inc_x_plus;
+
+    // SOLUTION 2
+
+    const bool x_not_overflow  = x != Width-1;
+    const bool x_not_underflow = x != 0;
+    const bool y_not_overflow  = y != Height-1;
+    const bool y_not_underflow = y != 0;
+
+    const uint8_t inc = 0b00000010;
+
+    if(y_not_underflow)
+    {
+        this->grid[y-1][x] += inc;
+
+        if(x_not_underflow)
+            this->grid[y-1][x-1] += inc;
+    
+        if(x_not_overflow)
+            this->grid[y-1][x+1] += inc;
+    }
+
+    if(x_not_underflow)
+        this->grid[y][x-1] += inc;
+
+    if(x_not_overflow)
+        this->grid[y][x+1] += inc;
+
+    if(y_not_overflow)
+    {
+        this->grid[y+1][x] += inc;
+
+        if(x_not_underflow)
+            this->grid[y+1][x-1] += inc;
+    
+        if(x_not_overflow)
+            this->grid[y+1][x+1] += inc;
+    }
+
+#endif
+
 }
 
 
@@ -35,6 +113,8 @@ void GameOfLife<Width,Height>::clear_cell(const size_t x, const size_t y)
 {
     // Clear state bit
     this->grid[y][x] &= NEIGHBOURS_MASK;
+
+#ifdef CONTINUOUS_GRID
 
     // Set neighbourhood vectors
     const size_t x_plus  = (x+1) % Width;
@@ -56,6 +136,81 @@ void GameOfLife<Width,Height>::clear_cell(const size_t x, const size_t y)
     this->grid[y_plus ][x_minus] -= dec;
     this->grid[y_plus ][x      ] -= dec;
     this->grid[y_plus ][x_plus ] -= dec;
+
+#else
+
+    // SOLUTION 1
+
+    // const size_t x_plus  = (x+1) % Width;
+    // const size_t x_minus = (x == 0) ? Width-1 : x-1;
+    // const size_t y_plus  = (y+1) % Height;
+    // const size_t y_minus = (y == 0) ? Height-1 : y-1;
+
+    // const uint8_t dec = 0b00000010;
+    // size_t dec_x_plus  = dec;
+    // size_t dec_x_minus = dec;
+    // size_t dec_y_plus  = dec;
+    // size_t dec_y_minus = dec;
+
+    // if(x == Width-1)
+    //     dec_x_plus = 0;
+    
+    // if(x == 0)
+    //     dec_x_minus = 0;
+
+    // if(y == Height-1)
+    //     dec_y_plus = 0;
+
+    // if(y == 0)
+    //     dec_y_minus = 0;
+
+    // this->grid[y_minus][x_minus] -= dec_y_minus | dec_x_minus;
+    // this->grid[y_minus][x      ] -= dec_y_minus;
+    // this->grid[y_minus][x_plus ] -= dec_y_minus | dec_x_plus;
+    // this->grid[y      ][x_minus] -= dec_x_minus;
+    // this->grid[y      ][x_plus ] -= dec_x_plus;
+    // this->grid[y_plus ][x_minus] -= dec_y_plus | dec_x_minus;
+    // this->grid[y_plus ][x      ] -= dec_y_plus;
+    // this->grid[y_plus ][x_plus ] -= dec_y_plus | dec_x_plus;
+
+    // SOLUTION 2
+
+    const bool x_not_overflow  = x != Width-1;
+    const bool x_not_underflow = x != 0;
+    const bool y_not_overflow  = y != Height-1;
+    const bool y_not_underflow = y != 0;
+
+    const uint8_t dec = 0b00000010;
+
+    if(y_not_underflow)
+    {
+        this->grid[y-1][x] -= dec;
+
+        if(x_not_underflow)
+            this->grid[y-1][x-1] -= dec;
+    
+        if(x_not_overflow)
+            this->grid[y-1][x+1] -= dec;
+    }
+
+    if(x_not_underflow)
+        this->grid[y][x-1] -= dec;
+
+    if(x_not_overflow)
+        this->grid[y][x+1] -= dec;
+
+    if(y_not_overflow)
+    {
+        this->grid[y+1][x] -= dec;
+
+        if(x_not_underflow)
+            this->grid[y+1][x-1] -= dec;
+    
+        if(x_not_overflow)
+            this->grid[y+1][x+1] -= dec;
+    }
+
+#endif
 }
 
 

@@ -6,7 +6,7 @@
 #include <SDL.h>
 #include <iostream>
 
-#define CONTINUOUS_GRID
+//#define CONTINUOUS_GRID
 
 #define STATE_MASK      0b00000001
 #define NEIGHBOURS_MASK 0b00011110
