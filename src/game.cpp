@@ -1,6 +1,6 @@
 #include "game.hpp"
 
-#define DEBUG
+//#define DEBUG
 
 template<std::size_t Width, std::size_t Height>
 void GameOfLife<Width,Height>::set_cell(const size_t x, const size_t y)

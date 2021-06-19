@@ -35,7 +35,7 @@ int main()
     // game.set_cell(4,3);
 
     // Random grid
-    game.set_random_grid(0, 10);
+    game.set_random_grid(0, 30);
 
     // Main Loop
     SDL_Event e;
