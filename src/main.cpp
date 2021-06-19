@@ -28,14 +28,14 @@ int main()
     GameOfLife<10,10> game{};
 
     // Glider 
-    // game.set_cell(5,1);
-    // game.set_cell(6,2);
-    // game.set_cell(6,3);
-    // game.set_cell(5,3);
-    // game.set_cell(4,3);
+    game.set_cell(5,1);
+    game.set_cell(6,2);
+    game.set_cell(6,3);
+    game.set_cell(5,3);
+    game.set_cell(4,3);
 
     // Random grid
-    game.set_random_grid(0, 30);
+    //game.set_random_grid(0, 30);
 
     // Main Loop
     SDL_Event e;
