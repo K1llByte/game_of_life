@@ -2,6 +2,7 @@
 #include <iostream>
 #include <SDL.h>
 
+#define TIME_DELAY 500
 
 int main()
 {
@@ -22,10 +23,9 @@ int main()
     );
     
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
-    
-    
 
-    GameOfLife<100,100> game{};
+    // Instanciate game objects
+    GameOfLife<10,10> game{};
 
     // Glider 
     // game.set_cell(5,1);
@@ -35,8 +35,7 @@ int main()
     // game.set_cell(4,3);
 
     // Random grid
-    game.set_random_grid(0, 2000);
-
+    game.set_random_grid(0, 10);
 
     // Main Loop
     SDL_Event e;
@@ -53,7 +52,7 @@ int main()
         // Clear with background color
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
-        SDL_Delay(10);
+        SDL_Delay(TIME_DELAY);
 
         // ====== Draw Space ====== //
 

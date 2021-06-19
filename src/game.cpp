@@ -1,5 +1,6 @@
 #include "game.hpp"
 
+#define DEBUG
 
 template<std::size_t Width, std::size_t Height>
 void GameOfLife<Width,Height>::set_cell(const size_t x, const size_t y)
@@ -251,18 +252,23 @@ void GameOfLife<Width,Height>::update()
 template<std::size_t Width, std::size_t Height>
 void GameOfLife<Width,Height>::draw(SDL_Renderer* renderer, const int win_width, const int win_height)
 {
-    // for(size_t i = 0 ; i < Height ; ++i)
-    // {
-    //     for(size_t j = 0 ; j < Width ; ++j)
-    //     {
-    //         if(this->grid[i][j] & STATE_MASK)
-    //             std::cout << "\u001b[37m" << int(this->grid[i][j] >> 1) << "\u001b[0m" << ' ';
-    //         else
-    //             std::cout << "\u001b[30m" << int(this->grid[i][j] >> 1) << "\u001b[0m" << ' ';
-    //     }
-    //     std::cout << '\n';
-    // }
-    // std::cout << '\n';
+
+#ifdef DEBUG
+
+    for(size_t i = 0 ; i < Height ; ++i)
+    {
+        for(size_t j = 0 ; j < Width ; ++j)
+        {
+            if(this->grid[i][j] & STATE_MASK)
+                std::cout << "\u001b[37m" << int(this->grid[i][j] >> 1) << "\u001b[0m" << ' ';
+            else
+                std::cout << "\u001b[30m" << int(this->grid[i][j] >> 1) << "\u001b[0m" << ' ';
+        }
+        std::cout << '\n';
+    }
+    std::cout << '\n';
+
+#endif
 
     const int pixel_height = win_height / Height;
     const int pixel_width = win_width / Width;
@@ -293,6 +299,9 @@ void GameOfLife<Width,Height>::set_random_grid(const unsigned seed, const size_t
     {
         const size_t x = rand() % (Width - 1);
         const size_t y = rand() % (Height - 1);
-        this->set_cell(x,y);
+        if(!(this->grid[y][x] & STATE_MASK))
+        {
+            this->set_cell(x,y);
+        }
     }
 }
