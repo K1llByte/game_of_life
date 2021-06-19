@@ -1,36 +1,5 @@
 #include "game.hpp"
 
-// #include <array>
-// #include <cstdint>
-// #include <SDL.h>
-// #include <iostream>
-
-// #define CONTINUOUS_GRID
-
-// #define STATE_MASK      0b00000001
-// #define NEIGHBOURS_MASK 0b00011110
-
-// template<std::size_t Width, std::size_t Height>
-// using Grid = std::array<std::array<uint8_t,Width>,Height>;
-
-// template<std::size_t Width = 200, std::size_t Height = 200>
-// class GameOfLife
-// {
-//     private:
-//         Grid<Width,Height> grid;
-//         Grid<Width,Height> aux_grid;
-
-//     public:
-//         GameOfLife() = default;
-//         GameOfLife(const Grid<Width,Height>& in_grid) : grid(in_grid) {};
-
-//         void set_cell(const size_t x, const size_t y);
-//         void clear_cell(const size_t x, const size_t y);
-//         void update();
-//         void draw(SDL_Renderer* , const int , const int);
-//         void set_random_grid(const unsigned seed, const size_t samples = 200);
-// };
-
 
 template<std::size_t Width, std::size_t Height>
 void GameOfLife<Width,Height>::set_cell(const size_t x, const size_t y)
@@ -39,10 +8,10 @@ void GameOfLife<Width,Height>::set_cell(const size_t x, const size_t y)
     this->grid[y][x] |= STATE_MASK;
 
     // Set neighbourhood vectors 
-    const size_t x_plus = (x+1) % Width;
-    const size_t x_minus = (x-1) % Width;
-    const size_t y_plus = (y+1) % Height;
-    const size_t y_minus = (y-1) % Height;
+    const size_t x_plus  = (x+1) % Width;
+    const size_t x_minus = (x == 0) ? Width-1 : x-1;
+    const size_t y_plus  = (y+1) % Height;
+    const size_t y_minus = (y == 0) ? Height-1 : y-1;
 
     // Update neighbourhood's neighbour count 
 
@@ -67,11 +36,11 @@ void GameOfLife<Width,Height>::clear_cell(const size_t x, const size_t y)
     // Clear state bit
     this->grid[y][x] &= NEIGHBOURS_MASK;
 
-    // Set neighbourhood vectors 
-    const size_t x_plus = (x+1) % Width;
-    const size_t x_minus = (x-1) % Width;
-    const size_t y_plus = (y+1) % Height;
-    const size_t y_minus = (y-1) % Height;
+    // Set neighbourhood vectors
+    const size_t x_plus  = (x+1) % Width;
+    const size_t x_minus = (x == 0) ? Width-1 : x-1;
+    const size_t y_plus  = (y+1) % Height;
+    const size_t y_minus = (y == 0) ? Height-1 : y-1;
 
     // Update neighbourhood's neighbour count 
 
@@ -127,6 +96,19 @@ void GameOfLife<Width,Height>::update()
 template<std::size_t Width, std::size_t Height>
 void GameOfLife<Width,Height>::draw(SDL_Renderer* renderer, const int win_width, const int win_height)
 {
+    // for(size_t i = 0 ; i < Height ; ++i)
+    // {
+    //     for(size_t j = 0 ; j < Width ; ++j)
+    //     {
+    //         if(this->grid[i][j] & STATE_MASK)
+    //             std::cout << "\u001b[37m" << int(this->grid[i][j] >> 1) << "\u001b[0m" << ' ';
+    //         else
+    //             std::cout << "\u001b[30m" << int(this->grid[i][j] >> 1) << "\u001b[0m" << ' ';
+    //     }
+    //     std::cout << '\n';
+    // }
+    // std::cout << '\n';
+
     const int pixel_height = win_height / Height;
     const int pixel_width = win_width / Width;
     SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );

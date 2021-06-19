@@ -5,7 +5,6 @@
 
 int main()
 {
-    
     const int window_width = 400;
     const int window_height = 400;
     
@@ -26,17 +25,18 @@ int main()
     
     
 
-    GameOfLife<200,200> game{};
+    GameOfLife<100,100> game{};
+
+    // Glider 
+    // game.set_cell(5,1);
+    // game.set_cell(6,2);
+    // game.set_cell(6,3);
+    // game.set_cell(5,3);
+    // game.set_cell(4,3);
+
+    // Random grid
     game.set_random_grid(0, 2000);
 
-    // GameOfLife<5,5> game{ Grid<5,5>{
-    //         std::array<uint8_t,5>{ 0 , 1 , 0 , 1 , 0},
-    //         std::array<uint8_t,5>{ 0 , 1 , 0 , 1 , 0},
-    //         std::array<uint8_t,5>{ 0 , 1 , 0 , 1 , 0},
-    //         std::array<uint8_t,5>{ 0 , 1 , 0 , 1 , 0},
-    //         std::array<uint8_t,5>{ 0 , 1 , 0 , 1 , 0}
-    //     }
-    // };
 
     // Main Loop
     SDL_Event e;
@@ -49,11 +49,11 @@ int main()
             if(e.type == SDL_QUIT)
                 quit = true;
         }
-        
+
         // Clear with background color
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
-        SDL_Delay(1);
+        SDL_Delay(10);
 
         // ====== Draw Space ====== //
 
