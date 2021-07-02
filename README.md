@@ -15,14 +15,13 @@ make run
 make clean
 ```
 
-<!-- 
 TODO:
-- Save and load (only a bit for a cell, and position version)
-- Logger
-- Stop game
-- Next iteration
-- Edit cells
--->
+- [ ] Save and load (only a bit for a cell, and position version)
+- [ ] Logger
+- [ ] Stop game
+- [ ] Next iteration
+- [ ] Edit cells
+
 
 
 <!--

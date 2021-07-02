@@ -3,6 +3,9 @@
 #include <fstream>
 #include <vector>
 
+#include "logger.hpp"
+
+
 #define GOL_VERSION 1
 // #define DEBUG
 
@@ -371,10 +374,9 @@ void GameOfLife<Width,Height>::save(const std::string& filename)
         }
     }
 
-
     RES:
     fout.close();
-
+    
     std::cout << "[INFO] Saved grid to '" << filename << "'\n";
 }
 
