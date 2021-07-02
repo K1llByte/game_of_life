@@ -17,9 +17,9 @@ make clean
 
 ## TODO
 - [ ] Save and load (only a bit for a cell, and position version)
-- [ ] Logger
-- [ ] Stop game
-- [ ] Next iteration
+- [x] Logger
+- [x] Stop game
+- [x] Next iteration
 - [ ] Edit cells
 
 
