@@ -1,6 +1,10 @@
 #include "game.hpp"
 
-//#define DEBUG
+#include <fstream>
+#include <vector>
+
+#define GOL_VERSION 1
+// #define DEBUG
 
 template<std::size_t Width, std::size_t Height>
 void GameOfLife<Width,Height>::set_cell(const size_t x, const size_t y)
@@ -304,4 +308,142 @@ void GameOfLife<Width,Height>::set_random_grid(const unsigned seed, const size_t
             this->set_cell(x,y);
         }
     }
+}
+
+
+template<std::size_t Width, std::size_t Height>
+void GameOfLife<Width,Height>::save(const std::string& filename)
+{
+    const uint16_t VERION_MASK = 0b0111111111111111;
+    const uint16_t TYPE_MASK   = 0b1000000000000000;
+
+    const uint16_t TYPE_FULL   = 1 << 15;
+    const uint16_t TYPE_ALIVE  = 0;
+    const uint16_t VERSION_MAX = VERION_MASK;
+    
+    //////////////////////////////////////
+    
+
+    std::array<std::size_t,2> dim{ Width, Height };
+
+    std::ofstream fout(filename, std::ios::binary);
+    
+
+    uint32_t cells_alive = 0;
+    for(size_t i = 0 ; i < Height ; ++i)
+        for(size_t j = 0 ; j < Width ; ++j)
+            cells_alive += (this->grid[i][j] & STATE_MASK);
+
+    std::cout << "alive cells: " << cells_alive << '\n';
+    if(cells_alive > Width*Height / 16)
+    {
+        std::cout << "[INFO] Saving full grid\n";
+
+        uint16_t verison = GOL_VERSION | TYPE_FULL;
+        fout.write(reinterpret_cast<char*>(&verison), sizeof(uint16_t));
+        fout.write(reinterpret_cast<char*>(&dim), sizeof(std::array<std::size_t,2>));
+        fout.write(reinterpret_cast<char*>(&this->grid), sizeof(Grid<Width,Height>));
+    }
+    else
+    {
+        std::cout << "[INFO] Saving alive cells\n";
+
+        uint16_t verison = GOL_VERSION | TYPE_ALIVE;
+        fout.write(reinterpret_cast<char*>(&verison), sizeof(uint16_t));
+        fout.write(reinterpret_cast<char*>(&dim), sizeof(std::array<std::size_t,2>));
+        
+        fout.write(reinterpret_cast<char*>(&cells_alive), sizeof(uint32_t));
+
+        size_t a = 0;
+        for(size_t i = 0 ; i < Height ; ++i)
+        {
+            for(size_t j = 0 ; j < Width ; ++j)
+            {
+                if(a == cells_alive)
+                    goto RES;
+
+                if(this->grid[i][j] & STATE_MASK)
+                {
+                    fout.write(reinterpret_cast<char*>(&i), sizeof(size_t));
+                    fout.write(reinterpret_cast<char*>(&j), sizeof(size_t));
+                }
+            }
+        }
+    }
+
+
+    RES:
+    fout.close();
+
+    std::cout << "[INFO] Saved grid to '" << filename << "'\n";
+}
+
+
+template<std::size_t Width, std::size_t Height>
+void GameOfLife<Width,Height>::load(const std::string& filename)
+{
+    const uint16_t VERION_MASK = 0b0111111111111111;
+    const uint16_t TYPE_MASK   = 0b1000000000000000;
+
+    const uint16_t TYPE_FULL   = 1 << 15;
+    const uint16_t TYPE_ALIVE  = 0;
+    const uint16_t VERSION_MAX = VERION_MASK;
+    
+    //////////////////////////////////////
+    
+    char version_bytes[sizeof(uint16_t)];
+    char dim_bytes[sizeof(std::array<std::size_t,2>)];
+    char grid_bytes[sizeof(Grid<Width,Height>)];
+
+    std::ifstream fin(filename, std::ios::binary);
+    
+    fin.read(version_bytes, sizeof(uint16_t));
+    uint16_t version = *reinterpret_cast<uint16_t*>(version_bytes);
+
+    fin.read(dim_bytes, sizeof(std::array<std::size_t,2>));
+    std::array<std::size_t,2> dim = *reinterpret_cast<std::array<std::size_t,2>*>(dim_bytes);
+
+    std::cout << "version: " << version << '\n';    
+    std::cout << "type: " << (version & TYPE_MASK) << '\n';    
+    if(dim[0] == Width && dim[1] == Height)
+    {
+        if((version & TYPE_MASK) == TYPE_FULL)
+        {
+            // Parse Full Grid save file
+            std::cout << "[INFO] Loading full grid\n";
+
+            fin.read(grid_bytes, sizeof(Grid<Width,Height>));
+            this->grid = *reinterpret_cast<Grid<Width,Height>*>(grid_bytes);
+        }
+        else
+        {
+            // Parse Alive Cells save file
+            std::cout << "[INFO] Loading alive cells\n";
+            
+            char alive_num_bytes[sizeof(uint32_t)];
+            fin.read(alive_num_bytes, sizeof(uint32_t));
+            uint32_t alive_num = *reinterpret_cast<uint32_t*>(alive_num_bytes);
+
+            memset(&grid, 0, Width*Height);
+            char pos_bytes[sizeof(size_t)];
+            for(uint32_t i = 0 ; i < alive_num ; ++i)
+            {
+                fin.read(pos_bytes, sizeof(size_t));
+                size_t y = *reinterpret_cast<size_t*>(pos_bytes);
+
+                fin.read(pos_bytes, sizeof(size_t));
+                size_t x = *reinterpret_cast<size_t*>(pos_bytes);
+
+                this->set_cell(x,y);
+            }
+        }
+    }
+    else
+    {
+        std::cout << "[ERROR] Dimensions don't match\n";
+    }
+    
+    fin.close();
+
+    std::cout << "[INFO] Loaded grid\n";
 }

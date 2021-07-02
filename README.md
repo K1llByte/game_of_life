@@ -15,10 +15,32 @@ make run
 make clean
 ```
 
+<!-- 
+TODO:
+- Save and load (only a bit for a cell, and position version)
+- Logger
+- Stop game
+- Next iteration
+- Edit cells
+-->
+
+
+<!--
+
+# Byte version
+16*N = w*h
+N = (w*h)/16
+
+# Bit version
+16*N = (w*h)/8
+N = (w*h)/128
+
+-->
+
 
 <!--
 Serialization of a game of life
-4 bytes para versão
+2 bytes para versão
 
 N - number of cells alive
 w - width

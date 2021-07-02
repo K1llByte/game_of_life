@@ -37,6 +37,8 @@ int main()
     // Random grid
     //game.set_random_grid(0, 30);
 
+    int tmp = 0;
+
     // Main Loop
     SDL_Event e;
     bool quit = false;
@@ -55,6 +57,18 @@ int main()
         SDL_Delay(TIME_DELAY);
 
         // ====== Draw Space ====== //
+
+        if(tmp == 0)
+        {
+            game.save("test.gol");
+        }
+
+        if(tmp == 10)
+        {
+            game.load("test.gol");
+        }
+
+        ++tmp;
 
         game.draw(renderer, window_width, window_height);
         game.update();

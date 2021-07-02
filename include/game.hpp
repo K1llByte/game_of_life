@@ -30,6 +30,10 @@ class GameOfLife
         void update();
         void draw(SDL_Renderer* , const int , const int);
         void set_random_grid(const unsigned seed, const size_t samples = 200);
+
+        void save(const std::string& filename);
+        void load(const std::string& filename);
+
 };
 
 #endif // GAME_HPP
