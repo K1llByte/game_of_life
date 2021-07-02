@@ -28,27 +28,57 @@ int main()
     GameOfLife<10,10> game{};
 
     // Glider 
-    // game.set_cell(5,1);
-    // game.set_cell(6,2);
-    // game.set_cell(6,3);
-    // game.set_cell(5,3);
-    // game.set_cell(4,3);
+    game.set_cell(5,1);
+    game.set_cell(6,2);
+    game.set_cell(6,3);
+    game.set_cell(5,3);
+    game.set_cell(4,3);
 
     // Random grid
-    game.set_random_grid(0, 30);
+    // game.set_random_grid(0, 30);
 
-    int tmp = 0;
+    // int tmp = 0;
 
     // Main Loop
-    SDL_Event e;
+    SDL_Event event;
+    bool next = false;
+    bool pause = false;
     bool quit = false;
     while(!quit)
     {
+        
         // Event Loop
-        while(SDL_PollEvent(&e) != 0) 
+        while(SDL_PollEvent(&event) != 0) 
         {
-            if(e.type == SDL_QUIT)
-                quit = true;
+            switch( event.type )
+            {
+                case SDL_KEYDOWN:
+                    switch (event.key.keysym.scancode)
+                    {
+                        case SDL_SCANCODE_SPACE:
+                            pause = !pause;
+                            std::cout << "Paused: " << (pause ? "true" : "false") << '\n';
+                            break;
+
+                        case SDL_SCANCODE_RIGHT:
+                            next = true;
+                            break;
+                    
+                        default:
+                            break;
+                    }
+                    break;
+
+                case SDL_KEYUP:
+                    break;
+
+                case SDL_QUIT:
+                    quit = true;
+                    break;
+
+                default:
+                    break;
+            }
         }
 
         // Clear with background color
@@ -58,22 +88,31 @@ int main()
 
         // ====== Draw Space ====== //
 
-        if(tmp == 0)
-        {
-            game.save("test.gol");
-        }
+        // if(tmp == 0)
+        // {
+        //     game.save("test.gol");
+        // }
 
-        if(tmp == 10)
-        {
-            game.load("test.gol");
-        }
+        // if(tmp == 10)
+        // {
+        //     game.load("test.gol");
+        // }
 
-        ++tmp;
+        // ++tmp;
 
         game.draw(renderer, window_width, window_height);
-        game.update();
+        if(!pause)
+            game.update();
+
+        if(next && pause)
+        {
+            game.update();
+            next = false;
+        }
+        
 
         // ======================== //
+
 
         // Draw buffer to screen
         SDL_RenderPresent(renderer);

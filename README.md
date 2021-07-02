@@ -15,7 +15,7 @@ make run
 make clean
 ```
 
-TODO:
+## TODO
 - [ ] Save and load (only a bit for a cell, and position version)
 - [ ] Logger
 - [ ] Stop game
